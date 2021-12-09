@@ -11,13 +11,20 @@ import {
 import mpg from "../api/mpg"
 import positionFunction from "../functions/position"
 import PositionPicker from "../components/PositionPicker"
+import SearchInput from "../components/SearchInput"
 
 const Players = ({ navigation, route }) => {
+  //initial list of all players fetched
   const [players, setplayers] = useState([])
+  //filtered list by position
   const [filteredPlayers, setfilteredPlayers] = useState([])
+  //filtered list by name search
   const [searchedPlayers, setsearchedPlayers] = useState([])
+  //rendered list
   const [list, setlist] = useState([])
+  //position filter
   const [filter, setfilter] = useState("")
+
   const clubId = route.params.id
 
   useEffect(() => {
@@ -35,87 +42,6 @@ const Players = ({ navigation, route }) => {
 
     setplayers(few)
     setlist(few)
-  }
-  const filtering = (position) => {
-    let filteredList = []
-
-    if (searchedPlayers.length == 0) {
-      console.log("search = 0")
-
-      //no text search yet
-      if (position == 0) {
-        console.log("search = 0 et pos = 0")
-
-        //no position filter
-        setlist(players)
-        setfilteredPlayers([])
-      } else {
-        filteredList = players.filter(
-          (item) => item.ultraPosition.toString() == position
-        )
-        setlist(filteredList)
-        setfilteredPlayers(filteredList)
-      }
-    } else {
-      //list already filtered by text search
-      console.log("search != 0")
-
-      if (position == 0) {
-        console.log("search != 0 et pos = 0")
-
-        //no position filter
-        setlist(searchedPlayers)
-        setfilteredPlayers([])
-      } else {
-        filteredList = searchedPlayers.filter(
-          (item) => item.ultraPosition.toString() == position
-        )
-        setlist(filteredList)
-        setfilteredPlayers(
-          players.filter((item) => item.ultraPosition.toString() == position)
-        )
-      }
-    }
-  }
-
-  const searchByName = (name) => {
-    let filteredList = []
-    if (filteredPlayers.length == 0) {
-      //no position filter yet
-      if (name == "") {
-        //no text search
-        setlist(players)
-        setsearchedPlayers([])
-      } else {
-        filteredList = players.filter(
-          (item) =>
-            item.lastName.startsWith(name) ||
-            (item.firstName && item.firstName.startsWith(name))
-        )
-        setlist(filteredList)
-        setsearchedPlayers(filteredList)
-      }
-    } else {
-      //list already filtered by position
-      if (name == "") {
-        //no text search
-        setlist(filteredPlayers)
-      } else {
-        filteredList = filteredPlayers.filter(
-          (item) =>
-            item.lastName.startsWith(name) ||
-            (item.firstName && item.firstName.startsWith(name))
-        )
-        setlist(filteredList)
-        setsearchedPlayers(
-          players.filter(
-            (item) =>
-              item.lastName.startsWith(name) ||
-              (item.firstName && item.firstName.startsWith(name))
-          )
-        )
-      }
-    }
   }
 
   // console.log(`players[0]`, players[0])
@@ -138,21 +64,29 @@ const Players = ({ navigation, route }) => {
   //console.log(`players`, players)
   return (
     <View style={{ flex: 1 }}>
-      <TextInput onChangeText={searchByName} placeholder="Nom" />
-
+      <SearchInput
+        players={players}
+        setlist={setlist}
+        filteredPlayers={filteredPlayers}
+        setsearchedPlayers={setsearchedPlayers}
+      />
       <PositionPicker
+        players={players}
         filter={filter}
         setFilter={setfilter}
-        onChange={filtering}
+        setlist={setlist}
+        setfilteredPlayers={setfilteredPlayers}
+        searchedPlayers={searchedPlayers}
       />
 
-      {players && <Text>nombre de players {list.length}</Text>}
-
-      <FlatList
-        keyExtractor={(item) => item.id}
-        data={list}
-        renderItem={renderPlayerItem}
-      />
+      <View style={{ margin: 8, borderRadius: 20 }}>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+          data={list}
+          renderItem={renderPlayerItem}
+        />
+      </View>
     </View>
   )
 }

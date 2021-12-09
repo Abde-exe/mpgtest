@@ -1,66 +1,40 @@
 import React, { useEffect, useState } from "react"
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Pressable,
-  Button,
-} from "react-native"
+import { FlatList, StyleSheet, Text, View, Pressable } from "react-native"
 
 import mpg from "../api/mpg"
-const test = [
-  {
-    id: "mekzfm",
-    name: {
-      "fr-FR": "Man. United",
-    },
-    defaultJerseyUrl:
-      "https://s3-eu-west-1.amazonaws.com/image.mpg/jersey/2021/2/1.png",
-  },
-  {
-    id: "fzp",
-    name: {
-      "fr-FR": "Midtjylland",
-    },
-    defaultJerseyUrl:
-      "https://s3-eu-west-1.amazonaws.com/image.mpg/jersey/2020/6/1000.png",
-  },
-  {
-    id: "fzberbp",
-    name: {
-      "fr-FR": "Salernitana",
-    },
-    defaultJerseyUrl:
-      "https://s3-eu-west-1.amazonaws.com/image.mpg/jersey/2021/5/1025.png",
-  },
-  {
-    id: "fzberbp",
-    name: {
-      "fr-FR": "Caen",
-    },
-    defaultJerseyUrl:
-      "https://s3-eu-west-1.amazonaws.com/image.mpg/jersey/2021/4/1028_v2.png",
-  },
-]
+
 const Home = ({ navigation }) => {
   useEffect(() => {
-  getChampsClubs()
+    //getChampsClubs()
   }, [])
 
- const getChampsClubs=async()=>{
- const response = await mpg.get("/championship-clubs")
- const test= response.data.championshipClubs["mpg_championship_club_1"]
-
-    
-       console.log(`response`, test)
-
+  const getChampsClubs = async () => {
+    const response = await mpg.get(
+      "/championship-player-stats/mpg_championship_player_220160/summary"
+    )
+    console.log(`response`, response.data)
   }
   return (
-    <View>
-      <Button title="Clubs" onPress={() => navigation.navigate("Clubs")} />
-      <Button title="Players" onPress={() => navigation.navigate("Players",{id:null})} />
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+        alignItems: "center",
+        height: "50%",
+      }}
+    >
+      <Pressable
+        onPress={() => navigation.navigate("Clubs")}
+        style={styles.button}
+      >
+        <Text style={styles.text}>Clubs</Text>
+      </Pressable>
+      <Pressable
+        onPress={() => navigation.navigate("Players", { id: null })}
+        style={styles.button}
+      >
+        <Text style={styles.text}>Joueurs</Text>
+      </Pressable>
     </View>
   )
 }
@@ -68,16 +42,19 @@ const Home = ({ navigation }) => {
 export default Home
 
 const styles = StyleSheet.create({
-  clubItem: {
+  button: {
     backgroundColor: "white",
     borderRadius: 25,
-    width: 95,
-    height: 100,
+    width: 150,
+    height: 150,
     alignItems: "center",
     justifyContent: "center",
     elevation: 5,
     marginRight: 5,
     marginVertical: 8,
     padding: 5,
+  },
+  text: {
+    fontSize: 32,
   },
 })
